@@ -18,6 +18,7 @@ import org.joda.time.format.DateTimeFormatter;
 import edu.gvsu.cis.convcalc.dummy.HistoryContent.HistoryItem;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -31,7 +32,6 @@ public class HistoryAdapter extends SectionedRecyclerViewAdapter<HistoryAdapter.
     private final List<String> sectionHeaders;
 
     public HistoryAdapter(List<HistoryItem> items, HistoryFragment.OnListFragmentInteractionListener listener) {
-        //mValues = items;
         this.dayValues = new HashMap<String,List<HistoryItem>>();
         this.sectionHeaders = new ArrayList<String>();
         DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd");
@@ -45,34 +45,12 @@ public class HistoryAdapter extends SectionedRecyclerViewAdapter<HistoryAdapter.
                 this.sectionHeaders.add(key);
             }
             list.add(hi);
+
+            Collections.sort(this.sectionHeaders);
         }
         mListener = listener;
+
     }
-
-
-
-
-
-    /*
-    @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mItem = mValues.get(position);
-        holder.mP1.setText(holder.mItem.toString());
-        holder.mDateTime.setText(holder.mItem.timestamp.toString());
-
-        holder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (null != mListener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.mItem);
-                }
-            }
-        });
-    }
-    */
-
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
@@ -90,9 +68,6 @@ public class HistoryAdapter extends SectionedRecyclerViewAdapter<HistoryAdapter.
             mImage = (ImageView) view.findViewById(R.id.imageView);
         }
 
-
-
-
         @Override
         public String toString() {
             return super.toString() + " '" + mDateTime.getText() + "'";
@@ -100,8 +75,10 @@ public class HistoryAdapter extends SectionedRecyclerViewAdapter<HistoryAdapter.
     }
 
     public class HeaderViewHolder extends RecyclerView.ViewHolder {
+        public TextView header;
         public HeaderViewHolder(View view) {
             super(view);
+            header = (TextView) view.findViewById(R.id.header);
         }
     }
 
@@ -129,7 +106,8 @@ public class HistoryAdapter extends SectionedRecyclerViewAdapter<HistoryAdapter.
 
     @Override
     protected HeaderViewHolder onCreateSectionHeaderViewHolder(ViewGroup parent, int viewType) {
-        return null;
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_section_header, parent, false);
+        return new HeaderViewHolder(view);
     }
 
     @Override
@@ -149,7 +127,7 @@ public class HistoryAdapter extends SectionedRecyclerViewAdapter<HistoryAdapter.
 
     @Override
     protected void onBindSectionHeaderViewHolder(HeaderViewHolder holder, int section) {
-
+        holder.header.setText(this.sectionHeaders.get(section));
     }
 
     @Override
@@ -163,7 +141,8 @@ public class HistoryAdapter extends SectionedRecyclerViewAdapter<HistoryAdapter.
         holder.mP1.setText(holder.mItem.toString());
         holder.mDateTime.setText(holder.mItem.timestamp.toString());
         if (holder.mItem.mode.equals("Length")) {
-            // length icon          holder.mImage.setImageDrawable(holder.mImage.getResources().getDrawable(R.drawable.length_icon));
+            // length icon
+            holder.mImage.setImageDrawable(holder.mImage.getResources().getDrawable(R.drawable.length_icon));
         } else {
             // volume icon
             holder.mImage.setImageDrawable(holder.mImage.getResources().getDrawable(R.drawable.volume_icon));
@@ -180,7 +159,6 @@ public class HistoryAdapter extends SectionedRecyclerViewAdapter<HistoryAdapter.
             }
         });
     }
-
 }
 
 
