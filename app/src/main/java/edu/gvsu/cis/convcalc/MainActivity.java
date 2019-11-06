@@ -11,12 +11,17 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import org.joda.time.DateTime;
+
 import edu.gvsu.cis.convcalc.UnitsConverter.LengthUnits;
 import edu.gvsu.cis.convcalc.UnitsConverter.VolumeUnits;
+import edu.gvsu.cis.convcalc.dummy.HistoryContent;
 
 public class MainActivity extends AppCompatActivity {
 
     public static int SETTINGS_RESULT = 1;
+    public static int HISTORY_RESULT = 2;
 
     private enum Mode {Length, Volume};
 
@@ -32,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView toUnits;
     private TextView fromUnits;
     private TextView title;
+
+    private HistoryContent.HistoryItem item;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,6 +131,9 @@ public class MainActivity extends AppCompatActivity {
                     Double dVal = Double.parseDouble(val);
                     Double cVal = UnitsConverter.convert(dVal, fUnits, tUnits);
                     dest.setText(Double.toString(cVal));
+                    item = new HistoryContent.HistoryItem(dVal, cVal, mode.toString(),
+                            toUnits.getText().toString(), fromUnits.getText().toString(), DateTime.now());
+                    HistoryContent.addItem(item);
                     break;
                 case Volume:
                     VolumeUnits vtUnits, vfUnits;
@@ -137,6 +147,11 @@ public class MainActivity extends AppCompatActivity {
                     Double vdVal = Double.parseDouble(val);
                     Double vcVal = UnitsConverter.convert(vdVal, vfUnits, vtUnits);
                     dest.setText(Double.toString(vcVal));
+
+                    item = new HistoryContent.HistoryItem(vdVal, vcVal, mode.toString(),
+                            toUnits.getText().toString(), fromUnits.getText().toString(), DateTime.now());
+                    HistoryContent.addItem(item);
+
                     break;
             }
         }
@@ -172,6 +187,11 @@ public class MainActivity extends AppCompatActivity {
             startActivityForResult(intent, SETTINGS_RESULT );
             return true;
         }
+        else if(item.getItemId() == R.id.action_history){
+            Intent intent = new Intent(MainActivity.this, HistoryActivity.class);
+            startActivityForResult(intent, HISTORY_RESULT);
+            return true;
+        }
         return false;
     }
 
@@ -180,6 +200,15 @@ public class MainActivity extends AppCompatActivity {
         if (resultCode == SETTINGS_RESULT) {
             this.fromUnits.setText(data.getStringExtra("fromUnits"));
             this.toUnits.setText(data.getStringExtra("toUnits"));
+        }
+        else if (resultCode == HISTORY_RESULT) {
+            String[] vals = data.getStringArrayExtra("item");
+            this.fromField.setText(vals[0]);
+            this.toField.setText(vals[1]);
+            this.mode = Mode.valueOf(vals[2]);
+            this.fromUnits.setText(vals[3]);
+            this.toUnits.setText(vals[4]);
+            this.title.setText(mode.toString() + " Converter");
         }
     }
 

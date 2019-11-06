@@ -10,13 +10,11 @@
 
     <fragment
         android:id="@+id/fragment"
-        android:name="edu.gvsu.cis.convcalc.ConversionFragment"
-        android:layout_width="419dp"
-        android:layout_height="679dp"
+        android:name="edu.gvsu.cis.convcalc.HistoryFragment"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.545"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
